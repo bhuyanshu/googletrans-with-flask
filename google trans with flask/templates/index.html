@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<title>Language Translator</title>
+<script src="/static/js/fontawesomepro.js"></script>
+<script src=""></script>
+<link rel="stylesheet" href="/static/css/main.css">
+</head>
+<body>
+<main>
+        <div class="div1">
+            <form class="myForm" method="POST" enctype="application/x-www-form-urlencoded" action="/">
+                <p>
+                <div class="inhead"><label for="text-to-translate" style="float: left;">Text to Translate</label></div>
+                <textarea type="text" name="text-to-translate" id="text-to-translate" placeholder="Input Here.."></textarea>
+                </p>
+        </div>
+        <div class="div2">
+            <div class="output">
+                <div class="outhead"><label for="translation-result"><strong>Translated text:</strong></label></div>
+                <textarea readonly class="form-control" id="translation-result"rows="5">{{ result }}</textarea>
+                
+                <!-- <label for="pronunciation"><strong>Pronunciation:</strong></label> -->
+                <textarea readonly class="form-control" id="pronunciation-result" rows="5">{{ data }}</textarea>
+                <div class="speaker">
+               <button id = "btnSpeak" type="reset"><i class="fad fa-volume-up fa-2x" ></i></button>
+               </div>
+            </div>
+        </div>
+        <div class="div3">
+            <div class="select-menu">
+                <p>
+                <div class="langhead"><label>Select Language <i class="fad fa-sort-up"></i></label></div> 
+            <div class="box">
+                <select name="select-language" id="select-language">
+                <option value="" selected="selected"><label>Select One <i class="fad fa-sort-up"></i></label></option>
+                <option value="ar">Arabic</option>
+                <option value="ca">Catalan</option>
+                <option value="zh-Hans">Chinese (Simplified)</option>
+                <option value="zh-Hant">Chinese (Traditional)</option>
+                <option value="hr">Croatian</option>
+                <option value="en">English</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+                <option value="el">Greek</option>
+                <option value="he">Hebrew</option>
+                <option value="hi">Hindi</option>
+                <option value="it">Italian</option>
+                <option value="ja">Japanese</option>
+                <option value="ko">Korean</option>
+                <option value="pt">Portuguese</option>
+                <option value="ru">Russian</option>
+                <option value="es">Spanish</option>
+                <option value="th">Thai</option>
+                <option value="tr">Turkish</option>
+                <option value="vi">Vietnamese</option>
+                </select>
+            </div>
+               
+                </p>
+            </div>
+            <div class="voice">
+                <div class="voicehead"><label>Select Voice:<i class="fad fa-sort-up"></i></label></i></div> 
+                <div class="box1"><select id="voiceList"></select><br><br></div>
+            </div>
+        </div>
+        <div class="div4">
+            <div class="butons">
+                <p><button type="submit" class="sub-btn" style="font-size: 20px;"><strong>Translate</strong></button>
+                    <!-- <button type="reset" class="res-btn">Reset</button></p> -->
+               </div>
+        </div>
+</main>
+</form>
+<div class="arrow"><i class="fad fa-sort-up"></i></div>
+<div class="arrow1"><i class="fad fa-sort-up"></i></div>
+
+<div class="desc">
+    <div class="head">
+        <div class="head-txt" >
+            <label> “Translation is not a matter of words only: it is a matter of making intelligible a whole culture.”</label>
+        </div>
+    </div>
+    <div class="desc2">
+
+    </div>
+</div>
+<script>
+    var voiceList = document.querySelector('#voiceList');
+    var txtInput = document.querySelector('#pronunciation-result');
+    var btnSpeak = document.querySelector('#btnSpeak');
+
+    var tts = window.speechSynthesis;
+    var voices = [];
+
+    GetVoices();
+    if(speechSynthesis !== undefined){
+        speechSynthesis.onvoiceschanged = GetVoices;
+    }
+
+    btnSpeak.addEventListener('click', ()=>{
+        var toSpeak = new SpeechSynthesisUtterance(txtInput.value);
+        var selectedVoiceName = voiceList.selectedOptions[0].getAttribute('data-name');
+        voices.forEach((voice)=> {
+            if(voice.name == selectedVoiceName){
+                toSpeak.voice = voice;
+            }
+        });
+        tts.speak(toSpeak);
+    });
+
+    function GetVoices(){
+        voices = tts.getVoices();
+        var selectedIndex = voiceList.selectedIndex < 0 ? 0 : voiceList.selectedIndex;
+        voiceList.innerHTML='';
+        voices.forEach((voice)=>{
+            var listItem = document.createElement('option');
+            listItem.textContent = voice.name;
+            listItem.setAttribute('data-lang',voice.lang);
+            listItem.setAttribute('data-name',voice.name);
+            voiceList.appendChild(listItem);
+        });
+
+        voiceList.selectedIndex = selectedIndex;
+    }
+</script>
+
+</body>
+</html>
